@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>be;school | Unit 2 Lesson 2-3: Incident Response and Risk Management</title>
+  <!-- Google Fonts: Cairo (400 to 900) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              orange: '#FF5500',
+              'orange-dark': '#E04A00',
+              'orange-light': '#FFF4ED',
+              navy: '#0B1B48',
+              'navy-light': '#14285D',
+              'navy-dark': '#07112E',
+            }
+          },
+          fontFamily: {
+            cairo: ['Cairo', 'sans-serif'],
+          },
+          boxShadow: {
+            'soft': '0 4px 20px -2px rgba(11, 27, 72, 0.07)',
+            'elevated': '0 12px 35px -4px rgba(11, 27, 72, 0.12)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #F8FAFC;
+      color: #0B1B48;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+    .brand-logo-text {
+      direction: ltr !important;
+      unicode-bidi: isolate;
+      display: inline-flex;
+      align-items: baseline;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+    .brand-logo-orange { color: #FF5500; }
+    .brand-logo-navy { color: #0B1B48; }
+    .brand-subtext {
+      color: #0B1B48;
+      font-weight: 800;
+      font-size: 0.85rem;
+      margin-top: -4px;
+      text-align: center;
+    }
+    .flip-card {
+      perspective: 1000px;
+      height: 280px;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: left;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 1.25rem;
+    }
+    .flip-card-back { transform: rotateY(180deg); }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #F1F5F9; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #FF5500; }
+    @media print {
+      body * { visibility: hidden; }
+      #print-area, #print-area * { visibility: visible; }
+      #print-area { position: absolute; left: 0; top: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col" dir="ltr">
+
+  <!-- Landing Screen -->
+  <section id="screen-landing" class="min-h-screen flex flex-col justify-between transition-all duration-500">
+    <div class="bg-[#0d1527] text-slate-300 px-4 py-2.5 flex items-center justify-between text-xs border-b border-slate-800">
+      <div class="flex items-center gap-2">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="font-medium text-slate-300">be;school Interactive Revision Suite • 2026/2027</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="bg-brand-navy-light/70 px-2.5 py-0.5 rounded text-[11px] text-orange-400 font-bold">2nd Secondary Grade • Cybersecurity Unit</span>
+        <button onclick="showToast('Official Ministry Curriculum: Egyptian Baccalaureate Edition')" class="hover:text-white transition">
+          <i class="fa-solid fa-circle-info"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto w-full px-4 py-8 md:py-12 flex-1 flex flex-col justify-center items-center">
+      <div class="text-center mb-8">
+        <div class="inline-flex flex-col items-center justify-center p-4 bg-white rounded-2xl shadow-soft border border-slate-100 mb-4">
+          <div class="brand-logo-text text-4xl sm:text-5xl font-black" dir="ltr">
+            <span class="brand-logo-orange">be</span><span class="brand-logo-orange">;</span><span class="brand-logo-navy">school</span>
+          </div>
+          <div class="brand-subtext text-brand-navy mt-1">مدرسة البرمجة</div>
+        </div>
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-black text-brand-navy mt-2">
+          Interactive Revision Platform
+        </h1>
+        <p class="text-slate-500 font-medium text-sm sm:text-base mt-2 max-w-xl mx-auto">
+          Programming and Artificial Intelligence • High School Year 2 (Languages & Egyptian Baccalaureate Edition)
+        </p>
+      </div>
+
+      <div class="w-full bg-white rounded-3xl p-6 sm:p-10 shadow-elevated border border-slate-100 text-center relative overflow-hidden transition-transform duration-300 hover:scale-[1.01]">
+        <div class="absolute top-0 right-0 w-36 h-36 bg-brand-orange-light rounded-bl-full -z-0 opacity-60"></div>
+        <div class="relative z-10 flex flex-col items-center">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-orange-light text-brand-orange font-bold text-xs sm:text-sm mb-4">
+            <i class="fa-solid fa-triangle-exclamation text-sm"></i>
+            Unit 2: Cybersecurity • Lesson 2-3
+          </div>
+          <h2 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-brand-navy mb-4 leading-snug">
+            Incident Response and Risk Management
+          </h2>
+          <p class="text-slate-600 text-sm sm:text-base max-w-2xl mx-auto mb-8 leading-relaxed">
+            Master security incidents, the 6-stage ordered incident response lifecycle, and risk evaluation matrices (Risk = Impact × Likelihood) with exhaustive textbook reference tables, interactive simulations, and rigorous assessments.
+          </p>
+          <button onclick="goToNameEntry()" class="w-full sm:w-auto px-10 py-4 bg-brand-orange hover:bg-brand-orange-dark text-white text-lg font-bold rounded-2xl shadow-lg shadow-orange-500/30 transition duration-200 transform hover:-translate-y-1 flex items-center justify-center gap-3">
+            <span>Start Revision 🎯</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-8 bg-blue-50/70 border border-blue-100 rounded-2xl p-4 sm:p-5 text-center max-w-xl text-xs sm:text-sm text-slate-600 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0">
+          <i class="fa-solid fa-chalkboard-user text-lg"></i>
+        </div>
+        <p class="text-left leading-relaxed">
+          <strong>Instructional Note:</strong> Enter your name below to track your interactive learning progress and generate your verified assessment performance report.
+        </p>
+      </div>
+    </div>
+
+    <footer class="text-center py-4 text-xs text-slate-400 border-t border-slate-200 bg-white">
+      © 2026/2027 Ministry of Education & Technical Education in collaboration with Japanese Partners | be;school
+    </footer>
+  </section>
+
+  <!-- Student Name Entry Screen -->
+  <section id="screen-name-entry" class="min-h-screen flex flex-col justify-center items-center px-4 py-8 hidden transition-all duration-500">
+    <div class="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-elevated border border-slate-100 relative">
+      <button onclick="goToLanding()" class="absolute top-6 left-6 text-slate-400 hover:text-brand-navy text-sm font-semibold flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Back</span>
+      </button>
+
+      <div class="w-20 h-20 bg-brand-orange-light text-brand-orange rounded-3xl mx-auto flex items-center justify-center text-3xl mb-5 shadow-inner">
+        <i class="fa-solid fa-user-graduate"></i>
+      </div>
+
+      <div class="text-center mb-6">
+        <h3 class="text-xl font-black text-brand-navy">Enter Your Name to Continue</h3>
+        <p class="text-xs text-slate-500 mt-1 font-medium">Unlock the full interactive revision suite and 50-question exam</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label for="student-name-input" class="block text-xs font-bold text-slate-700 mb-1.5">
+            Student Full Name or Identifier <span class="text-brand-orange">*</span>
+          </label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+              <i class="fa-regular fa-id-badge"></i>
+            </span>
+            <input 
+              type="text" 
+              id="student-name-input" 
+              placeholder="Enter your name here..." 
+              class="w-full pl-10 pr-4 py-3 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-orange/40 focus:border-brand-orange text-brand-navy font-bold transition"
+              onkeypress="handleNameKeypress(event)"
+            />
+          </div>
+          <p id="name-error" class="text-red-500 text-xs mt-1.5 font-bold hidden flex items-center gap-1">
+            <i class="fa-solid fa-circle-exclamation"></i> Please enter your name first to proceed!
+          </p>
+        </div>
+
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-[11px] text-slate-500 leading-relaxed">
+          <i class="fa-solid fa-shield-halved text-brand-orange mr-1"></i>
+          Your session progress is tracked locally for your verified 50-question performance certificate.
+        </div>
+
+        <button onclick="submitStudentName()" class="w-full py-3.5 bg-brand-orange hover:bg-brand-orange-dark text-white font-bold rounded-xl shadow-md transition duration-150 flex items-center justify-center gap-2">
+          <span>Enter Platform & Start 🚀</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Learning Platform -->
+  <section id="screen-main-platform" class="min-h-screen flex flex-col hidden transition-all duration-500">
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur shadow-sm border-b border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="brand-logo-text text-2xl font-black" dir="ltr">
+            <span class="brand-logo-orange">be</span><span class="brand-logo-orange">;</span><span class="brand-logo-navy">school</span>
+          </div>
+          <span class="hidden sm:inline-block h-5 w-px bg-slate-200"></span>
+          <span class="hidden md:inline-block text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
+            Unit 2 • Lesson 2-3: Incident Response & Risk Management
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div class="flex items-center gap-1.5 bg-brand-orange-light text-brand-orange px-3 py-1.5 rounded-full text-xs font-bold border border-orange-200">
+            <i class="fa-solid fa-user-check"></i>
+            <span id="header-student-name">Student</span>
+          </div>
+          <button onclick="triggerPrintModal()" title="Print Exam-Eve Summary" class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition text-sm">
+            <i class="fa-solid fa-print"></i>
+          </button>
+          <button onclick="logoutToLanding()" title="Return to Landing" class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 transition text-sm">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-brand-navy text-white px-4">
+        <div class="max-w-7xl mx-auto flex overflow-x-auto no-scrollbar gap-1 py-1.5">
+          <button onclick="switchTab('tab-explanation')" id="nav-btn-explanation" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 whitespace-nowrap transition bg-brand-orange text-white">
+            <i class="fa-solid fa-book-open-reader"></i>
+            <span>1. Explanation & Textbook Tables</span>
+          </button>
+          <button onclick="switchTab('tab-revision')" id="nav-btn-revision" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 whitespace-nowrap transition text-slate-300 hover:bg-brand-navy-light">
+            <i class="fa-solid fa-layer-group"></i>
+            <span>2. Revision & Audio Summary</span>
+          </button>
+          <button onclick="switchTab('tab-solutions')" id="nav-btn-solutions" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 whitespace-nowrap transition text-slate-300 hover:bg-brand-navy-light">
+            <i class="fa-solid fa-square-check"></i>
+            <span>3. Textbook Solutions (p. 49-54)</span>
+          </button>
+          <button onclick="switchTab('tab-exam')" id="nav-btn-exam" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 whitespace-nowrap transition text-slate-300 hover:bg-brand-navy-light">
+            <i class="fa-solid fa-vial-circle-check"></i>
+            <span>4. Exam (50 Questions)</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 py-8 flex-1">
+
+      <!-- TAB 1: Explanation & Textbook Tables & Interactive Simulations -->
+      <div id="tab-explanation" class="tab-pane space-y-10">
+        
+        <!-- Objectives & Guiding Question -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-soft border border-slate-200">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4 mb-6">
+            <div class="flex items-center gap-2 text-brand-orange font-black text-sm">
+              <i class="fa-solid fa-bullseye text-base"></i>
+              <span>Official Learning Objectives (Textbook p. 48)</span>
+            </div>
+            <span class="text-xs bg-slate-100 px-3 py-1 rounded-full font-bold text-slate-600">Curriculum 2026/2027</span>
+          </div>
+          <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <li class="flex items-start gap-3 bg-brand-orange-light/50 p-4 rounded-2xl border border-orange-100">
+              <i class="fa-solid fa-check-circle text-brand-orange mt-1"></i>
+              <div class="text-sm font-bold text-slate-700 leading-relaxed">
+                Explain what a security incident is and describe the stages of incident response in the correct ordered sequence.
+              </div>
+            </li>
+            <li class="flex items-start gap-3 bg-brand-orange-light/50 p-4 rounded-2xl border border-orange-100">
+              <i class="fa-solid fa-check-circle text-brand-orange mt-1"></i>
+              <div class="text-sm font-bold text-slate-700 leading-relaxed">
+                Apply the idea of risk assessment by prioritizing risks according to their impact and likelihood (Risk = Impact × Likelihood).
+              </div>
+            </li>
+          </ul>
+
+          <div class="bg-gradient-to-r from-brand-navy to-brand-navy-light text-white p-5 rounded-2xl flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-brand-orange flex items-center justify-center text-xl flex-shrink-0">
+              <i class="fa-solid fa-question"></i>
+            </div>
+            <div>
+              <span class="text-xs font-bold text-orange-300 block mb-1">Guiding Question:</span>
+              <p class="text-sm sm:text-base font-bold leading-relaxed">
+                When a security incident happens, how should an organization respond in order—and how does it decide which risks to address first?
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 1: Security Incidents & Textbook Table (p. 49) -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-soft border border-slate-200 space-y-6">
+          <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+            <span class="w-10 h-10 rounded-2xl bg-brand-orange text-white flex items-center justify-center font-black"><i class="fa-solid fa-triangle-exclamation"></i></span>
+            <div>
+              <h3 class="text-xl font-black text-brand-navy">1. Security Incidents & Textbook Table (Textbook p. 49)</h3>
+              <p class="text-xs text-slate-500 font-medium">Information leak, data tampering, and service outage</p>
+            </div>
+          </div>
+
+          <p class="text-sm text-slate-700 leading-relaxed">
+            Even a well-protected system can be attacked. When a security incident occurs—such as data leaked, files tampered with, or a service knocked offline—a rushed and unplanned reaction only makes the damage worse. Organizations follow a clear, ordered response so that damage is contained, the cause is removed, and the same problem does not return.
+          </p>
+
+          <!-- Textbook Table: Security Incidents -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr class="bg-brand-navy text-white">
+                  <th class="p-3.5 rounded-tl-xl font-bold">Type</th>
+                  <th class="p-3.5 rounded-tr-xl font-bold">Description</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 bg-slate-50/50">
+                <tr class="hover:bg-slate-50 transition">
+                  <td class="p-3.5 font-bold text-brand-orange">Information leak</td>
+                  <td class="p-3.5 text-slate-700">Personal information or confidential information is leaked to the outside.</td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition">
+                  <td class="p-3.5 font-bold text-brand-orange">Data tampering</td>
+                  <td class="p-3.5 text-slate-700">Data within a system is altered without authorization.</td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition">
+                  <td class="p-3.5 font-bold text-brand-orange">Service outage</td>
+                  <td class="p-3.5 text-slate-700">A service becomes unavailable due to attacks on the server, etc.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Section 2: The 6 Stages of Incident Response & Simulation (p. 49-50) -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-soft border border-slate-200 space-y-6">
+          <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+            <span class="w-10 h-10 rounded-2xl bg-brand-navy text-white flex items-center justify-center font-black"><i class="fa-solid fa-list-ol"></i></span>
+            <div>
+              <h3 class="text-xl font-black text-brand-navy">2. The 6 Stages of Incident Response (Textbook p. 49-50)</h3>
+              <p class="text-xs text-slate-500 font-medium">Why order matters: Preparation, Detection, Containment, Eradication, Recovery, Prevention</p>
+            </div>
+          </div>
+
+          <p class="text-sm text-slate-700 leading-relaxed">
+            When a security incident occurs, response proceeds through <strong>six ordered stages</strong>. It is vital to proceed in order. For example, if recovery is performed without identifying the root cause (eradication), the same incident may occur again.
+          </p>
+
+          <!-- SIMULATION: Interactive 6-Stage Incident Response Workflow -->
+          <div class="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 border border-slate-800 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-brand-orange/20 rounded-bl-full -z-0 blur-xl"></div>
+            <div class="relative z-10">
+              <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                <div class="flex items-center gap-3">
+                  <span class="w-10 h-10 rounded-2xl bg-brand-orange text-white flex items-center justify-center font-black"><i class="fa-solid fa-network-wired"></i></span>
+                  <div>
+                    <h4 class="text-base sm:text-lg font-black">Interactive Incident Response Lifecycle Simulator</h4>
+                    <p class="text-xs text-slate-400">Click each stage below to examine its exact technical objective and rationale</p>
+                  </div>
+                </div>
+                <span class="text-xs bg-brand-orange text-white font-bold px-3 py-1 rounded-full">Interactive Lab</span>
+              </div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-6">
+                <button onclick="setIncSimStage(1)" id="inc-btn-1" class="p-3 rounded-xl text-left border-2 transition bg-brand-orange text-white border-brand-orange shadow text-xs font-bold">
+                  <span class="block opacity-70 text-[10px]">Phase 1</span>
+                  Preparation
+                </button>
+                <button onclick="setIncSimStage(2)" id="inc-btn-2" class="p-3 rounded-xl text-left border-2 transition bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 text-xs font-bold">
+                  <span class="block opacity-70 text-[10px]">Phase 2</span>
+                  Detection
+                </button>
+                <button onclick="setIncSimStage(3)" id="inc-btn-3" class="p-3 rounded-xl text-left border-2 transition bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 text-xs font-bold">
+                  <span class="block opacity-70 text-[10px]">Phase 3</span>
+                  Containment
+                </button>
+                <button onclick="setIncSimStage(4)" id="inc-btn-4" class="p-3 rounded-xl text-left border-2 transition bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 text-xs font-bold">
+                  <span class="block opacity-70 text-[10px]">Phase 4</span>
+                  Eradication
+                </button>
+                <button onclick="setIncSimStage(5)" id="inc-btn-5" class="p-3 rounded-xl text-left border-2 transition bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 text-xs font-bold">
+                  <span class="block opacity-70 text-[10px]">Phase 5</span>
+                  Recovery
+                </button>
+                <button onclick="setIncSimStage(6)" id="inc-btn-6" class="p-3 rounded-xl text-left border-2 transition bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 text-xs font-bold">
+                  <span class="block opacity-70 text-[10px]">Phase 6</span>
+                  Prevention
+                </button>
+              </div>
+
+              <div id="inc-sim-output" class="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs sm:text-sm leading-relaxed">
+                <strong class="text-orange-400 text-sm block mb-2 font-black">1. Preparation (Textbook p. 49)</strong>
+                <p class="mb-2 text-slate-300">Establish response procedures and structures in advance, training staff and preparing toolkits before any incident strikes.</p>
+                <div class="mt-2 pt-2 border-t border-slate-800 text-[11px] text-orange-300 font-mono">
+                  <strong>Goal:</strong> Readiness and predefined organizational structure.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Risk Assessment & Matrix Simulation (p. 50-51) -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-soft border border-slate-200 space-y-6">
+          <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+            <span class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-black"><i class="fa-solid fa-calculator"></i></span>
+            <div>
+              <h3 class="text-xl font-black text-brand-navy">3. Risk Assessment & Evaluation Matrix (Textbook p. 50-51)</h3>
+              <p class="text-xs text-slate-500 font-medium">Risk Size = Impact × Likelihood</p>
+            </div>
+          </div>
+
+          <div class="text-sm text-slate-700 leading-relaxed space-y-4">
+            <p>
+              Because no team can fix everything at once, organizations prioritize risks based on two factors:
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                <strong class="text-brand-orange block mb-1">Impact:</strong>
+                How much damage occurs if the risk actually materializes.
+              </div>
+              <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                <strong class="text-brand-orange block mb-1">Likelihood:</strong>
+                How high the probability is that the risk will actually materialize.
+              </div>
+            </div>
+            <div class="p-4 rounded-2xl bg-brand-orange-light border border-orange-200 text-brand-navy font-bold text-xs sm:text-sm text-center">
+              Formula: <strong>Risk Size = Impact × Likelihood</strong>. High-impact and high-likelihood risks must be addressed first!
+            </div>
+          </div>
+        </div>
+
+        <!-- Think It Through Breakouts -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-soft border border-slate-200">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="w-9 h-9 rounded-xl bg-brand-navy text-white flex items-center justify-center text-sm font-black"><i class="fa-solid fa-lightbulb"></i></span>
+            <h3 class="text-xl font-black text-brand-navy">Think It Through & Case Study Breakouts</h3>
+          </div>
+
+          <div class="space-y-6">
+            <div class="p-5 bg-orange-50/70 border border-orange-200 rounded-2xl">
+              <div class="flex items-center justify-between gap-3 mb-2">
+                <span class="text-xs font-black text-brand-orange uppercase tracking-wider">Containment vs Eradication (Textbook p. 50)</span>
+                <button onclick="toggleAnswer('think-containment')" class="text-xs font-bold text-brand-orange bg-white px-3 py-1.5 rounded-lg border border-orange-300 hover:bg-orange-100 transition">
+                  Reveal Model Answer
+                </button>
+              </div>
+              <p class="text-xs sm:text-sm font-bold text-brand-navy mb-2">
+                Why must containment come before eradication in the six-stage response?
+              </p>
+              <div id="think-containment" class="hidden mt-3 p-4 bg-white rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed">
+                <strong>Curriculum Answer:</strong> Containment limits the scope of impact and stops the damage from spreading further across the network. If you attempt eradication or recovery first without containing the threat, active malware could reinfect systems or cause further leaks while you work.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TAB 2: Revision & Audio Summary -->
+      <div id="tab-revision" class="tab-pane hidden space-y-10">
+        
+        <div class="bg-gradient-to-r from-brand-navy via-brand-navy-light to-brand-navy text-white rounded-3xl p-6 sm:p-8 shadow-elevated border border-slate-700 relative overflow-hidden">
+          <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-brand-orange/20 rounded-full blur-2xl"></div>
+          
+          <div class="relative z-10">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-brand-orange flex items-center justify-center text-xl text-white shadow-lg">
+                  <i class="fa-solid fa-headphones"></i>
+                </div>
+                <div>
+                  <h3 class="text-lg sm:text-xl font-black">60-Second Audio Rapid Summary</h3>
+                  <p class="text-xs text-orange-200 font-medium">Native English Speech Synthesis • 1.15x Educational Cadence</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-2">
+                <button id="audio-play-btn" onclick="playAudioSummary()" class="px-5 py-2.5 bg-brand-orange hover:bg-brand-orange-dark text-white rounded-xl text-xs sm:text-sm font-bold shadow transition flex items-center gap-2">
+                  <i class="fa-solid fa-play"></i>
+                  <span>Listen to Summary 🎙️</span>
+                </button>
+                <button onclick="pauseAudioSummary()" class="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition">
+                  <i class="fa-solid fa-pause"></i>
+                </button>
+                <button onclick="stopAudioSummary()" class="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition">
+                  <i class="fa-solid fa-stop"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="bg-slate-900/80 backdrop-blur rounded-2xl p-4 text-xs sm:text-sm text-slate-300 leading-relaxed border border-slate-700/60 max-h-36 overflow-y-auto">
+              <p id="audio-script-text">
+                Welcome students to Be School! Here is your quick revision of Lesson 2-3: Incident Response and Risk Management. When a security incident like an information leak, data tampering, or service outage occurs, organizations follow six ordered stages: preparation, detection, containment, eradication, recovery, and prevention of recurrence. Order is vital because recovering without eradicating the root cause lets the incident return. Furthermore, organizations prioritize threats using risk assessment, calculating risk size as impact multiplied by likelihood, and addressing high impact and high likelihood risks first.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3D Flip Flashcards Section (6 Core Concepts) -->
+        <div>
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-xl bg-brand-orange text-white flex items-center justify-center text-sm font-bold">
+                <i class="fa-solid fa-clone"></i>
+              </span>
+              <h3 class="text-xl font-black text-brand-navy">3D Concept Flashcards</h3>
+            </div>
+            <span class="text-xs text-slate-500 font-bold">Click any card to flip and inspect its definition</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+              <div class="flip-card-inner">
+                <div class="flip-card-front bg-white p-6 shadow-soft border-2 border-slate-100 flex flex-col justify-between hover:border-brand-orange transition">
+                  <div class="flex items-center justify-between"><span class="text-xs font-bold text-brand-orange bg-brand-orange-light px-2.5 py-1 rounded-lg">Incident</span><i class="fa-solid fa-arrow-rotate-right text-slate-400 text-sm"></i></div>
+                  <div class="text-center my-auto">
+                    <div class="w-14 h-14 rounded-2xl bg-orange-100 text-brand-orange mx-auto flex items-center justify-center text-2xl mb-3"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <h4 class="text-lg font-black text-brand-navy">Security Incident</h4>
+                  </div>
+                  <span class="text-[11px] text-center text-slate-400 font-bold">Click to flip</span>
+                </div>
+                <div class="flip-card-back bg-gradient-to-br from-brand-navy to-brand-navy-light text-white p-6 shadow-elevated flex flex-col justify-between">
+                  <span class="text-xs font-bold text-orange-400">Definition:</span>
+                  <p class="text-xs sm:text-sm font-medium leading-relaxed my-auto text-slate-200">A situation in which actual damage occurs due to an information security problem (e.g. data leak, tampering, outage).</p>
+                  <span class="text-[10px] text-slate-400">Textbook p. 49</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+              <div class="flip-card-inner">
+                <div class="flip-card-front bg-white p-6 shadow-soft border-2 border-slate-100 flex flex-col justify-between hover:border-brand-orange transition">
+                  <div class="flex items-center justify-between"><span class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg">Lifecycle</span><i class="fa-solid fa-arrow-rotate-right text-slate-400 text-sm"></i></div>
+                  <div class="text-center my-auto">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 mx-auto flex items-center justify-center text-2xl mb-3"><i class="fa-solid fa-list-ol"></i></div>
+                    <h4 class="text-lg font-black text-brand-navy">6-Stage Response</h4>
+                  </div>
+                  <span class="text-[11px] text-center text-slate-400 font-bold">Click to flip</span>
+                </div>
+                <div class="flip-card-back bg-gradient-to-br from-blue-950 to-brand-navy text-white p-6 shadow-elevated flex flex-col justify-between">
+                  <span class="text-xs font-bold text-blue-400">Definition:</span>
+                  <p class="text-xs sm:text-sm font-medium leading-relaxed my-auto text-slate-200">Preparation → Detection → Containment → Eradication → Recovery → Prevention of recurrence.</p>
+                  <span class="text-[10px] text-slate-400">Textbook p. 49</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+              <div class="flip-card-inner">
+                <div class="flip-card-front bg-white p-6 shadow-soft border-2 border-slate-100 flex flex-col justify-between hover:border-brand-orange transition">
+                  <div class="flex items-center justify-between"><span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">Containment</span><i class="fa-solid fa-arrow-rotate-right text-slate-400 text-sm"></i></div>
+                  <div class="text-center my-auto">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center text-2xl mb-3"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h4 class="text-lg font-black text-brand-navy">Containment</h4>
+                  </div>
+                  <span class="text-[11px] text-center text-slate-400 font-bold">Click to flip</span>
+                </div>
+                <div class="flip-card-back bg-gradient-to-br from-emerald-950 to-brand-navy text-white p-6 shadow-elevated flex flex-col justify-between">
+                  <span class="text-xs font-bold text-emerald-400">Definition:</span>
+                  <p class="text-xs sm:text-sm font-medium leading-relaxed my-auto text-slate-200">Limiting the scope of impact so that damage does not spread further across the network.</p>
+                  <span class="text-[10px] text-slate-400">Textbook p. 49, 54</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+              <div class="flip-card-inner">
+                <div class="flip-card-front bg-white p-6 shadow-soft border-2 border-slate-100 flex flex-col justify-between hover:border-brand-orange transition">
+                  <div class="flex items-center justify-between"><span class="text-xs font-bold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-lg">Eradication</span><i class="fa-solid fa-arrow-rotate-right text-slate-400 text-sm"></i></div>
+                  <div class="text-center my-auto">
+                    <div class="w-14 h-14 rounded-2xl bg-purple-100 text-purple-600 mx-auto flex items-center justify-center text-2xl mb-3"><i class="fa-solid fa-virus-slash"></i></div>
+                    <h4 class="text-lg font-black text-brand-navy">Eradication</h4>
+                  </div>
+                  <span class="text-[11px] text-center text-slate-400 font-bold">Click to flip</span>
+                </div>
+                <div class="flip-card-back bg-gradient-to-br from-purple-950 to-brand-navy text-white p-6 shadow-elevated flex flex-col justify-between">
+                  <span class="text-xs font-bold text-purple-400">Definition:</span>
+                  <p class="text-xs sm:text-sm font-medium leading-relaxed my-auto text-slate-200">Removing the root cause of the incident (such as deleting malware or closing exploited vulnerabilities).</p>
+                  <span class="text-[10px] text-slate-400">Textbook p. 49, 54</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+              <div class="flip-card-inner">
+                <div class="flip-card-front bg-white p-6 shadow-soft border-2 border-slate-100 flex flex-col justify-between hover:border-brand-orange transition">
+                  <div class="flex items-center justify-between"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg">Risk Formula</span><i class="fa-solid fa-arrow-rotate-right text-slate-400 text-sm"></i></div>
+                  <div class="text-center my-auto">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 mx-auto flex items-center justify-center text-2xl mb-3"><i class="fa-solid fa-calculator"></i></div>
+                    <h4 class="text-lg font-black text-brand-navy">Risk Assessment</h4>
+                  </div>
+                  <span class="text-[11px] text-center text-slate-400 font-bold">Click to flip</span>
+                </div>
+                <div class="flip-card-back bg-gradient-to-br from-amber-950 to-brand-navy text-white p-6 shadow-elevated flex flex-col justify-between">
+                  <span class="text-xs font-bold text-amber-400">Definition:</span>
+                  <p class="text-xs sm:text-sm font-medium leading-relaxed my-auto text-slate-200">Risk Size = Impact × Likelihood. High-impact and high-likelihood risks are prioritized first.</p>
+                  <span class="text-[10px] text-slate-400">Textbook p. 50</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+              <div class="flip-card-inner">
+                <div class="flip-card-front bg-white p-6 shadow-soft border-2 border-slate-100 flex flex-col justify-between hover:border-brand-orange transition">
+                  <div class="flex items-center justify-between"><span class="text-xs font-bold text-teal-600 bg-teal-50 px-2.5 py-1 rounded-lg">Priority</span><i class="fa-solid fa-arrow-rotate-right text-slate-400 text-sm"></i></div>
+                  <div class="text-center my-auto">
+                    <div class="w-14 h-14 rounded-2xl bg-teal-100 text-teal-600 mx-auto flex items-center justify-center text-2xl mb-3"><i class="fa-solid fa-ranking-star"></i></div>
+                    <h4 class="text-lg font-black text-brand-navy">Prioritization</h4>
+                  </div>
+                  <span class="text-[11px] text-center text-slate-400 font-bold">Click to flip</span>
+                </div>
+                <div class="flip-card-back bg-gradient-to-br from-teal-950 to-brand-navy text-white p-6 shadow-elevated flex flex-col justify-between">
+                  <span class="text-xs font-bold text-teal-400">Definition:</span>
+                  <p class="text-xs sm:text-sm font-medium leading-relaxed my-auto text-slate-200">Systematically ordering risks so limited resources address the most critical threats first.</p>
+                  <span class="text-[10px] text-slate-400">Textbook p. 50</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div id="print-area" class="bg-white rounded-3xl p-6 sm:p-8 shadow-soft border border-slate-200">
+          <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4 mb-6">
+            <div class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-xl bg-brand-orange text-white flex items-center justify-center"><i class="fa-solid fa-star"></i></span>
+              <div>
+                <h3 class="text-lg sm:text-xl font-black text-brand-navy">Exam-Eve Summary: Remember Always</h3>
+                <p class="text-xs text-slate-500">Essential testable insights and official curriculum takeaways</p>
+              </div>
+            </div>
+            <button onclick="copySummaryNotes()" class="px-4 py-2 bg-slate-100 hover:bg-brand-orange hover:text-white text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-2">
+              <i class="fa-regular fa-copy"></i>
+              <span>Copy Summary to Clipboard</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm text-slate-700 leading-relaxed">
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <strong class="text-brand-orange block mb-1">1. Security Incidents:</strong>
+              Situations involving real damage such as information leaks, data tampering, or service outages.
+            </div>
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <strong class="text-brand-orange block mb-1">2. 6-Stage Lifecycle:</strong>
+              Preparation → Detection → Containment → Eradication → Recovery → Prevention of recurrence.
+            </div>
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <strong class="text-brand-orange block mb-1">3. Order Matters:</strong>
+              Recovery without eradication allows the incident to repeat; containment must precede eradication.
+            </div>
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <strong class="text-brand-orange block mb-1">4. Risk Assessment:</strong>
+              Risk Size = Impact × Likelihood. High-impact and high-likelihood risks are addressed first.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TAB 3: Textbook Solutions (p. 49-54) -->
+      <div id="tab-solutions" class="tab-pane hidden space-y-8">
+        
+        <div class="bg-white rounded-3xl p-6 shadow-soft border border-slate-200">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl"><i class="fa-solid fa-book-bookmark"></i></div>
+            <div>
+              <h3 class="text-xl font-black text-brand-navy">Complete Textbook Solutions Repository (Pages 49 – 54)</h3>
+              <p class="text-xs text-slate-500">Exhaustive model solutions, step-by-step rationales, and grading rubrics for every exercise in Lesson 2-3</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2 pt-3 border-t border-slate-100 text-xs">
+            <a href="#sol-explore" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-brand-orange hover:text-white font-bold text-slate-700 transition">Pause & Think Prompts (p. 50)</a>
+            <a href="#sol-worked-example" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-brand-orange hover:text-white font-bold text-slate-700 transition">Worked Example & Try (p. 50-53)</a>
+            <a href="#sol-essay-question" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-brand-orange hover:text-white font-bold text-slate-700 transition">Exam Essay [6 Marks] (p. 52)</a>
+            <a href="#sol-end-exercises" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-brand-orange hover:text-white font-bold text-slate-700 transition">End Exercises & Review (p. 53-54)</a>
+          </div>
+        </div>
+
+        <!-- Section 1: Pause & Think Prompts -->
+        <div id="sol-explore" class="bg-white rounded-3xl p-6 sm:p-8 shadow-soft border border-slate-200">
+          <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+            <h4 class="font-black text-base text-brand-navy flex items-center gap-2">
+              <i class="fa-solid fa-compass text-brand-orange"></i>
+              Pause & Think Prompts (Textbook Page 50)
+            </h4>
+            <span class="text-xs bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md font-bold">In-Lesson Reflections</span>
+          </div>
+
+          <div class="space-y-4 text-xs sm:text-sm">
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <strong class="text-brand-orange block mb-1">1. Pause & Think: Containment Before Eradication (Page 50):</strong>
+              <p class="text-slate-700 mb-2"><em>Prompt:</em> Why must containment come before eradication in the six-stage response?</p>
+              <div class="p-3 bg-white rounded-xl border border-slate-200 text-slate-600">
+                <strong>Model Solution & Rationale:</strong> Containment immediately limits the scope of impact and stops damage from spreading across the network. If you attempt eradication or recovery first without containing the active threat, malware can continue infecting systems or leaking data while you work.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Worked Example & Try Tasks -->
+        <div id="sol-worked-example" class="bg-white rounded-3xl p-6 sm:p-8 shadow-soft border border-slate-200">
+          <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+            <h4 class="font-black text-base text-brand-navy flex items-center gap-2">
+              <i class="fa-solid fa-check-double text-emerald-600"></i>
+              Worked Example & Try Tasks (Textbook Pages 50–53)
+            </h4>
+            <span class="text-xs bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-md font-bold">Step-by-Step Verified</span>
+          </div>
+
+          <div class="space-y-4 text-xs sm:text-sm">
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <p class="font-bold text-slate-800 mb-2">Worked Example (1) True/False Statements (p. 50-52):</p>
+              <ul class="space-y-1 text-slate-700">
+                <li>• A: A security incident is a situation in which actual damage occurs due to an information security problem. ➔ <span class="text-emerald-600 font-bold">[ O True ]</span></li>
+                <li>• B: In incident response, it is important to first prevent the spread of damage before removing the cause. ➔ <span class="text-emerald-600 font-bold">[ O True ]</span></li>
+                <li>• C: The size of a risk can be determined by impact alone. ➔ <span class="text-red-600 font-bold">[ X False ]</span> (Risk size = Impact × Likelihood).</li>
+                <li>• D: The final stage of incident response is prevention of recurrence. ➔ <span class="text-emerald-600 font-bold">[ O True ]</span></li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <p class="font-bold text-slate-800 mb-2">Try 1 & Try 2 Questions (Page 52-53):</p>
+              <ul class="space-y-1 text-slate-700">
+                <li>• Try 1(1) Security incident; (2) Preparation, Detection, Containment, Eradication, Recovery, Prevention of recurrence; (3) Impact and Likelihood.</li>
+                <li>• Try 2(1) NOT an appropriate example: <strong>C. A software update was performed to add new features</strong> (Routine updates are maintenance, not security incidents).</li>
+                <li>• Try 2(2) Risk assessment rule: <strong>C. Risks with both high impact and high likelihood should be addressed first</strong>.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Official Exam-Style Essay Question [6 Marks] (Page 52) -->
+        <div id="sol-essay-question" class="bg-white rounded-3xl p-6 sm:p-8 shadow-soft border-2 border-brand-orange/30">
+          <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-8 h-8 rounded-xl bg-brand-orange text-white flex items-center justify-center font-bold text-xs">6M</span>
+              <h4 class="font-black text-base text-brand-navy">Exam-Style Question & Official Grading Rubric [6 Marks] (p. 52)</h4>
+            </div>
+            <span class="text-xs font-bold text-brand-orange bg-brand-orange-light px-3 py-1 rounded-full">Textbook p. 52</span>
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-5 text-xs sm:text-sm font-bold text-slate-800">
+            Prompt: Explain why the six stages of incident response must be carried out in order, using recovery and eradication as an example. [6 Marks] In your answer: refer to what happens if the cause is not removed.
+          </div>
+
+          <div class="space-y-3 text-xs sm:text-sm">
+            <div class="p-3.5 bg-white rounded-xl border-l-4 border-brand-orange border-slate-200 shadow-sm">
+              <div class="flex justify-between font-bold text-brand-navy mb-1">
+                <span>Pillar 1: Fixed Ordered Sequence of Stages</span>
+                <span class="text-brand-orange font-black">[2 / 2 Marks]</span>
+              </div>
+              <p class="text-slate-600 leading-relaxed">Explains that incident response follows a strict logical sequence (Preparation → Detection → Containment → Eradication → Recovery → Prevention).</p>
+            </div>
+            <div class="p-3.5 bg-white rounded-xl border-l-4 border-brand-orange border-slate-200 shadow-sm">
+              <div class="flex justify-between font-bold text-brand-navy mb-1">
+                <span>Pillar 2: Flaw of Recovering Without Eradication</span>
+                <span class="text-brand-orange font-black">[2 / 2 Marks]</span>
+              </div>
+              <p class="text-slate-600 leading-relaxed">Explains that if recovery is performed before eradicating the root cause (malware/vulnerability), the restored system remains vulnerable and the same incident will recur.</p>
+            </div>
+            <div class="p-3.5 bg-white rounded-xl border-l-4 border-brand-orange border-slate-200 shadow-sm">
+              <div class="flex justify-between font-bold text-brand-navy mb-1">
+                <span>Pillar 3: Conclusion on System Stability</span>
+                <span class="text-brand-orange font-black">[2 / 2 Marks]</span>
+              </div>
+              <p class="text-slate-600 leading-relaxed">Synthesizes how following the ordered stages ensures long-term security and permanent elimination of threats.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: End-of-Lesson Exercises & Review -->
+        <div id="sol-end-exercises" class="bg-white rounded-3xl p-6 sm:p-8 shadow-soft border border-slate-200">
+          <h4 class="font-black text-base text-brand-navy mb-4 border-b border-slate-100 pb-3">End-of-Lesson Exercises & Review Key (Textbook Pages 53–54)</h4>
+          <div class="space-y-4 text-xs sm:text-sm text-slate-700">
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <strong class="text-brand-navy block mb-1">Exercise 2: Passage Fill-in-the-Blanks (p. 53-54)</strong>
+              <p class="text-slate-600 mb-2">Blanks (a)-(e): (a) <strong>security incident</strong>; (b) <strong>containment</strong>; (c) <strong>eradication</strong>; (d) <strong>recovery</strong>; (e) <strong>prevention of recurrence</strong>.</p>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <strong class="text-brand-navy block mb-1">Exercise 3(2): Incident Response Order (p. 54)</strong>
+              <p class="text-slate-600">Correct Choice: <strong>B. Preparation → Detection → Containment → Eradication → Recovery → Prevention of recurrence</strong>.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TAB 4: Exam Engine - 50 Questions (True Randomized Answers & English Feedback) -->
+      <div id="tab-exam" class="tab-pane hidden space-y-8">
+        
+        <div id="exam-engine-view" class="space-y-6">
+          <div class="bg-white rounded-3xl p-6 shadow-soft border border-slate-200">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+              <div>
+                <span class="text-xs font-black text-brand-orange uppercase tracking-wider">Comprehensive Question Bank • 50 Questions</span>
+                <h3 class="text-xl font-black text-brand-navy">Lesson 2-3 Interactive Assessment Engine</h3>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xs font-bold text-slate-500">Answered: <span id="answered-count" class="text-brand-orange font-black">0</span> / 50</span>
+                <div class="w-32 bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                  <div id="exam-progress-fill" class="bg-brand-orange h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100">
+              <div class="text-[11px] font-bold text-slate-500 mb-2 flex items-center justify-between">
+                <span>Quick Navigation Matrix (1 - 50):</span>
+                <div class="flex items-center gap-3 text-[10px]">
+                  <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Answered</span>
+                  <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-brand-orange"></span> Current</span>
+                  <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-200"></span> Pending</span>
+                </div>
+              </div>
+              <div id="question-jump-grid" class="grid grid-cols-10 sm:grid-cols-10 md:grid-cols-25 gap-1.5"></div>
+            </div>
+          </div>
+
+          <div id="current-question-card" class="bg-white rounded-3xl p-6 sm:p-8 shadow-elevated border border-slate-200 relative min-h-[320px] flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-3">
+                <span id="question-tier-badge" class="px-3 py-1 rounded-full text-xs font-black bg-blue-50 text-blue-700 border border-blue-200">Category</span>
+                <span id="question-number-display" class="text-xs font-black text-slate-400">Question 1 of 50</span>
+              </div>
+              <h4 id="question-prompt" class="text-base sm:text-lg font-black text-brand-navy mb-6 leading-relaxed">Loading question...</h4>
+              <div id="options-container" class="space-y-3 mb-6"></div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+              <button onclick="toggleExamHint()" class="text-xs font-bold text-slate-500 hover:text-brand-orange flex items-center gap-1.5 transition py-2 px-3 rounded-xl hover:bg-orange-50">
+                <i class="fa-regular fa-lightbulb text-brand-orange"></i>
+                <span id="hint-btn-text">Pedagogical Scaffolding Hint</span>
+              </button>
+
+              <div class="flex items-center gap-2">
+                <button id="btn-prev-q" onclick="navigateQuestion(-1)" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
+                  <i class="fa-solid fa-chevron-left mr-1"></i> Previous
+                </button>
+                <button id="btn-next-q" onclick="navigateQuestion(1)" class="px-5 py-2 bg-brand-navy hover:bg-brand-navy-light text-white rounded-xl text-xs font-bold transition">
+                  Next <i class="fa-solid fa-chevron-right ml-1"></i>
+                </button>
+                <button id="btn-submit-exam" onclick="submitExamForGrading()" class="px-5 py-2 bg-brand-orange hover:bg-brand-orange-dark text-white rounded-xl text-xs font-bold transition shadow hidden">
+                  Submit & Calculate Score 🏁
+                </button>
+              </div>
+            </div>
+
+            <div id="in-question-hint-box" class="hidden mt-3 p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 leading-relaxed">
+              <i class="fa-solid fa-info-circle mr-1 text-amber-600"></i>
+              <span id="hint-content-text">Hint text...</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="exam-results-view" class="hidden space-y-8">
+          <div id="score-banner" class="bg-white rounded-3xl p-6 sm:p-8 shadow-elevated border-2 text-center">
+            <div id="score-icon-container" class="w-20 h-20 rounded-3xl mx-auto flex items-center justify-center text-4xl mb-4"></div>
+            <h3 id="student-score-name" class="text-2xl font-black text-brand-navy mb-1">Student Evaluation</h3>
+            <div class="flex items-center justify-center gap-2 my-3">
+              <span class="text-3xl sm:text-4xl font-black text-brand-orange" id="raw-score-display">0</span>
+              <span class="text-slate-400 text-xl font-bold">/ 50</span>
+              <span class="text-xl font-black text-brand-navy px-3 py-1 bg-slate-100 rounded-xl ml-2" id="percent-score-display">0%</span>
+            </div>
+            <p id="score-tier-message" class="text-sm font-bold max-w-xl mx-auto leading-relaxed mt-2 text-slate-700"></p>
+            
+            <div class="mt-6 flex flex-wrap justify-center gap-3">
+              <button onclick="retakeExam()" class="px-6 py-2.5 bg-brand-orange hover:bg-brand-orange-dark text-white rounded-xl text-xs sm:text-sm font-bold shadow transition">
+                <i class="fa-solid fa-rotate-right mr-1"></i> Retake Full Exam
+              </button>
+              <button onclick="switchTab('tab-explanation')" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs sm:text-sm font-bold transition">
+                <i class="fa-solid fa-book-open mr-1"></i> Review Lesson Explanation
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-soft border border-slate-200">
+            <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-8 h-8 rounded-xl bg-brand-navy text-white flex items-center justify-center text-sm"><i class="fa-solid fa-list-check"></i></span>
+                <h4 class="font-black text-lg text-brand-navy">Detailed 50-Question Examination Audit & Rationale</h4>
+              </div>
+              <span class="text-xs font-bold text-slate-500">Review correct answers and curriculum explanations</span>
+            </div>
+            <div id="audit-questions-list" class="space-y-4"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <div id="toast-box" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+      <div class="bg-brand-navy text-white px-5 py-3 rounded-2xl shadow-elevated border border-slate-700 text-xs sm:text-sm font-bold flex items-center gap-3">
+        <i class="fa-solid fa-bell text-brand-orange"></i>
+        <span id="toast-message">Notification</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Application Script Logic -->
+  <script>
+    const appState = {
+      studentName: '',
+      activeScreen: 'screen-landing',
+      activeTab: 'tab-explanation',
+      currentExamIndex: 0,
+      userAnswers: new Array(50).fill(null),
+      examSubmitted: false,
+      speechUtterance: null
+    };
+
+    /* Simulation Logic for 6-Stage Incident Response */
+    function setIncSimStage(stage) {
+      for (let i = 1; i <= 6; i++) {
+        const btn = document.getElementById(`inc-btn-${i}`);
+        if (i === stage) {
+          btn.className = 'p-3 rounded-xl text-left border-2 transition bg-brand-orange text-white border-brand-orange shadow text-xs font-bold';
+        } else {
+          btn.className = 'p-3 rounded-xl text-left border-2 transition bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 text-xs font-bold';
+        }
+      }
+
+      const out = document.getElementById('inc-sim-output');
+      const data = {
+        1: { title: "1. Preparation", desc: "Establish response procedures and structures in advance, training staff and preparing toolkits before any incident strikes.", role: "Readiness and predefined organizational structure." },
+        2: { title: "2. Detection", desc: "Discover and confirm that an information security incident has actually occurred through alerts, logs, or reports.", role: "Early discovery and alert verification." },
+        3: { title: "3. Containment", desc: "Limit the scope of impact so that damage does not spread further across the network (e.g. isolating an infected PC).", role: "Stopping the spread of damage before root cause removal." },
+        4: { title: "4. Eradication", desc: "Remove the root cause of the incident, such as removing malware or patching the exploited vulnerability.", role: "Permanent removal of the threat source." },
+        5: { title: "5. Recovery", desc: "Return systems and services to their normal operating state from clean backups or repaired environments.", role: "Restoring normal business operations safely." },
+        6: { title: "6. Prevention of Recurrence", desc: "Analyze the cause thoroughly and take preventive measures so that the exact same incident does not happen again.", role: "Long-term hardening and post-incident analysis." }
+      };
+
+      out.innerHTML = `
+        <strong class="text-orange-400 text-sm block mb-2 font-black">${data[stage].title} (Textbook p. 49)</strong>
+        <p class="mb-2 text-slate-300">${data[stage].desc}</p>
+        <div class="mt-2 pt-2 border-t border-slate-800 text-[11px] text-orange-300 font-mono"><strong>Objective:</strong> ${data[stage].role}</div>
+      `;
+      showToast(`Switched to incident response stage ${stage}`);
+    }
+
+    /* 50-Question Comprehensive Exam Bank for Lesson 2-3 with True Randomized Answers across A, B, C, D */
+    const questionBank = [
+      {
+        id: 1, tier: "Fill in the Blanks", tierClass: "bg-blue-50 text-blue-700 border-blue-200",
+        prompt: "Complete the sentence: A situation in which actual damage occurs due to an information security problem is called a security _____.",
+        options: ["breach", "incident", "hazard", "threat"],
+        correct: 1, hint: "Main term defined on textbook page 49.", rationale: "Textbook p. 49: A security incident is a situation in which actual damage occurs due to an information security problem."
+      },
+      {
+        id: 2, tier: "Fill in the Blanks", tierClass: "bg-blue-50 text-blue-700 border-blue-200",
+        prompt: "Complete the sentence: When a security incident occurs, response proceeds through _____ ordered stages.",
+        options: ["four", "five", "six", "seven"],
+        correct: 2, hint: "Number of phases from preparation to prevention.", rationale: "Textbook p. 49: Incident response proceeds through six ordered stages."
+      },
+      {
+        id: 3, tier: "Fill in the Blanks", tierClass: "bg-blue-50 text-blue-700 border-blue-200",
+        prompt: "Complete the sentence: The stage of incident response that limits the scope of impact so that damage does not spread further is _____.",
+        options: ["Containment", "Detection", "Eradication", "Recovery"],
+        correct: 0, hint: "Stopping the spread of damage.", rationale: "Textbook p. 49: Containment limits the scope of impact so damage does not spread further."
+      },
+      {
+        id: 4, tier: "Fill in the Blanks", tierClass: "bg-blue-50 text-blue-700 border-blue-200",
+        prompt: "Complete the sentence: The stage of incident response that removes the root cause of the incident, such as removing malware, is _____.",
+        options: ["Preparation", "Recovery", "Eradication", "Prevention"],
+        correct: 2, hint: "Removing the malware or root cause.", rationale: "Textbook p. 49: Eradication removes the cause of the incident."
+      },
+      {
+        id: 5, tier: "Fill in the Blanks", tierClass: "bg-blue-50 text-blue-700 border-blue-200",
+        prompt: "Complete the sentence: The formula for calculating risk size in risk assessment is Risk Size = Impact × _____.",
+        options: ["Likelihood", "Vulnerability", "Probability", "Exposure"],
+        correct: 0, hint: "Probability of occurrence.", rationale: "Textbook p. 50: Risk size = Impact × Likelihood."
+      },
+      {
+        id: 6, tier: "Fill in the Blanks", tierClass: "bg-blue-50 text-blue-700 border-blue-200",
+        prompt: "Complete the sentence: In risk assessment, risks with both high impact and high _____ should be addressed first.",
+        options: ["cost", "likelihood", "frequency", "complexity"],
+        correct: 1, hint: "Probability factor.", rationale: "Textbook p. 50: High-impact and high-likelihood risks should be addressed first."
+      },
+      {
+        id: 7, tier: "Fill in the Blanks", tierClass: "bg-blue-50 text-blue-700 border-blue-200",
+        prompt: "Complete the sentence: The final stage among the six stages of incident response is prevention of _____.",
+        options: ["recurrence", "failure", "attacks", "damage"],
+        correct: 0, hint: "Ensuring the same incident doesn't happen again.", rationale: "Textbook p. 49: Stage 6 is prevention of recurrence."
+      },
+      {
+        id: 8, tier: "Fill in the Blanks", tierClass: "bg-blue-50 text-blue-700 border-blue-200",
+        prompt: "Complete the sentence: Establishing response procedures and structures in advance is known as the _____ stage.",
+        options: ["Preparation", "Detection", "Containment", "Recovery"],
+        correct: 0, hint: "First stage in advance.", rationale: "Textbook p. 49: Stage 1 is preparation."
+      },
+      {
+        id: 9, tier: "Fill in the Blanks", tierClass: "bg-blue-50 text-blue-700 border-blue-200",
+        prompt: "Complete the sentence: Returning systems and services to their normal operating state is called _____.",
+        options: ["eradication", "recovery", "restoration", "containment"],
+        correct: 1, hint: "Stage 5 of incident response.", rationale: "Textbook p. 49: Stage 5 is recovery."
+      },
+      {
+        id: 10, tier: "Fill in the Blanks", tierClass: "bg-blue-50 text-blue-700 border-blue-200",
+        prompt: "Complete the sentence: Personal or confidential information being leaked to the outside is classified as an information _____.",
+        options: ["leak", "outage", "tampering", "breach"],
+        correct: 0, hint: "Security incident type.", rationale: "Textbook p. 49: Information leak is when personal or confidential information is leaked."
+      },
+
+      // Definitions & Concepts (Q11 - Q20)
+      {
+        id: 11, tier: "Definitions", tierClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        prompt: "What is a security incident?",
+        options: ["A planned software upgrade", "A situation in which actual damage occurs due to an information security problem", "A routine antivirus system scan", "A hardware maintenance schedule"],
+        correct: 1, hint: "Occurrence of actual damage.", rationale: "Textbook p. 49: A security incident is a situation in which actual damage occurs due to an information security problem."
+      },
+      {
+        id: 12, tier: "Definitions", tierClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        prompt: "Why must the six stages of incident response be carried out in a strict, ordered sequence?",
+        options: ["To slow down the recovery process for legal reasons", "Because acting out of order—such as recovering before eradicating the cause—allows the incident to recur", "Because software programs require sequential execution", "To reduce the workload of system administrators"],
+        correct: 1, hint: "Preventing the threat from returning.", rationale: "Textbook p. 49, 50: Proceeding in order ensures root causes are removed so the same incident doesn't repeat."
+      },
+      {
+        id: 13, tier: "Definitions", tierClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        prompt: "What is the primary purpose of the containment stage in incident response?",
+        options: ["To permanently delete all infected files", "To limit the scope of impact so that damage does not spread further across the network", "To restore normal business operations", "To analyze the root cause of the attack"],
+        correct: 1, hint: "Halting damage spread.", rationale: "Textbook p. 49: Containment limits the scope of impact so damage does not spread further."
+      },
+      {
+        id: 14, tier: "Definitions", tierClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        prompt: "What does 'likelihood' refer to in risk assessment?",
+        options: ["The total financial cost of a breach", "How high the probability is that the risk will actually materialize", "The time required to recover data", "The number of users affected by an outage"],
+        correct: 1, hint: "Probability of occurrence.", rationale: "Textbook p. 50: Likelihood is how probable it is that the risk will actually materialize."
+      },
+      {
+        id: 15, tier: "Definitions", tierClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        prompt: "What does 'impact' refer to in risk assessment?",
+        options: ["How much damage occurs if the risk actually materializes", "The exact time of day an attack happens", "The speed of the network connection", "The number of developers on the security team"],
+        correct: 0, hint: "Severity of damage.", rationale: "Textbook p. 50: Impact is how much damage occurs if the risk materializes."
+      },
+      {
+        id: 16, tier: "Definitions", tierClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        prompt: "What is the second stage of the six-stage incident response lifecycle?",
+        options: ["Preparation", "Detection", "Containment", "Eradication"],
+        correct: 1, hint: "Finding and confirming the incident.", rationale: "Textbook p. 49: Stage 2 is detection (discover and confirm incident)."
+      },
+      {
+        id: 17, tier: "Definitions", tierClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        prompt: "Which incident type describes a service becoming unavailable due to server attacks?",
+        options: ["Information leak", "Data tampering", "Service outage", "Hardware failure"],
+        correct: 2, hint: "Inability to access service.", rationale: "Textbook p. 49: Service outage occurs when a service becomes unavailable due to attacks."
+      },
+      {
+        id: 18, tier: "Definitions", tierClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        prompt: "Why is risk prioritization necessary for organizations?",
+        options: ["Because no team can fix everything at once, requiring systematic prioritization", "Because laws require exactly three risks to be fixed", "Because computers cannot process more than two risks", "Because security incidents only happen once a year"],
+        correct: 0, hint: "Limited resources.", rationale: "Textbook p. 50: Since it is difficult to address all risks at once, setting priorities is essential."
+      },
+      {
+        id: 19, tier: "Definitions", tierClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        prompt: "What is the primary role of the eradication stage?",
+        options: ["Isolating affected computers from the network", "Removing the root cause of the incident (e.g., removing malware)", "Restoring systems from backup tapes", "Creating response procedures in advance"],
+        correct: 1, hint: "Eliminating the threat source.", rationale: "Textbook p. 49: Eradication removes the cause of the incident."
+      },
+      {
+        id: 20, tier: "Definitions", tierClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        prompt: "What is the goal of the prevention of recurrence stage?",
+        options: ["To punish the attacker legally", "To analyze the cause and take measures so that the same incident does not happen again", "To upgrade all office furniture", "To increase advertising budgets"],
+        correct: 1, hint: "Long-term preventive measures.", rationale: "Textbook p. 49: Prevention of recurrence analyzes causes and takes measures to prevent future repeats."
+      },
+
+      // Give Reasons / Explain Why (Q21 - Q30)
+      {
+        id: 21, tier: "Give Reasons", tierClass: "bg-amber-50 text-amber-700 border-amber-200",
+        prompt: "Give a reason: Why must containment come before eradication during a cyber attack response?",
+        options: ["Because containment is legally required first", "To limit the impact and prevent the damage from spreading further across the network while you find the cause", "Because containment deletes malware automatically", "Because eradication requires system reboots"],
+        correct: 1, hint: "Stopping the spread of damage.", rationale: "Textbook p. 49, 54: Containment stops damage from spreading before removing the root cause."
+      },
+      {
+        id: 22, tier: "Give Reasons", tierClass: "bg-amber-50 text-amber-700 border-amber-200",
+        prompt: "Give a reason: Why is it dangerous to perform system recovery before eradication during an incident?",
+        options: ["Recovery takes too long", "If the root cause (malware) is not removed, restoring the system will just let the same incident happen again immediately", "Recovery deletes backup files", "Recovery increases network traffic"],
+        correct: 1, hint: "Leaving the malware active.", rationale: "Textbook p. 50, 52: If recovery is performed without identifying/removing the cause, the incident will recur."
+      },
+      {
+        id: 23, tier: "Give Reasons", tierClass: "bg-amber-50 text-amber-700 border-amber-200",
+        prompt: "Give a reason: Why do organizations prioritize risks with high impact and high likelihood?",
+        options: ["They are the easiest to ignore", "They pose the greatest combined threat to operations and must be addressed first given limited resources", "They require the least amount of paperwork", "They only occur during weekends"],
+        correct: 1, hint: "Greatest danger to the organization.", rationale: "Textbook p. 50: High-impact and high-likelihood risks carry the highest risk size and must be addressed first."
+      },
+      {
+        id: 24, tier: "Give Reasons", tierClass: "bg-amber-50 text-amber-700 border-amber-200",
+        prompt: "Give a reason: Why is preparation (Stage 1) crucial before an incident even occurs?",
+        options: ["It eliminates all cyber attacks permanently", "It establishes response procedures and structures in advance so the team can act quickly and calmly when an incident strikes", "It reduces electricity bills", "It speeds up internet browsing"],
+        correct: 1, hint: "Readiness and structured response.", rationale: "Textbook p. 49: Preparation sets up procedures and structures in advance."
+      },
+      {
+        id: 25, tier: "Give Reasons", tierClass: "bg-amber-50 text-amber-700 border-amber-200",
+        prompt: "Give a reason: Why can't an organization address all information security risks simultaneously?",
+        options: ["Computers overheat when handling multiple risks", "Resources, time, and budget are limited, making systematic prioritization essential", "Security guidelines forbid fixing more than one risk per month", "Risks disappear on their own if ignored"],
+        correct: 1, hint: "Resource constraints.", rationale: "Textbook p. 50: Since it is difficult to address all risks at the same time, setting priorities is important."
+      },
+      {
+        id: 26, tier: "Give Reasons", tierClass: "bg-amber-50 text-amber-700 border-amber-200",
+        prompt: "Give a reason: Why is analyzing the cause during stage 6 (prevention of recurrence) important?",
+        options: ["To write fiction stories about hackers", "To ensure that corrective measures are implemented so the same vulnerability is never exploited again", "To reduce employee working hours", "To increase software license costs"],
+        correct: 1, hint: "Stopping future repeats.", rationale: "Textbook p. 49: Analyzing causes ensures measures are taken so the same incident doesn't recur."
+      },
+      {
+        id: 27, tier: "Give Reasons", tierClass: "bg-amber-50 text-amber-700 border-amber-200",
+        prompt: "Give a reason: Why is disconnecting an infected PC from the network considered a containment action?",
+        options: ["It turns off the computer's power", "It immediately blocks the infected device from communicating with other internal machines, stopping malware spread", "It formats the hard drive", "It updates the antivirus software"],
+        correct: 1, hint: "Isolating the threat.", rationale: "Textbook p. 49, 52: Disconnecting isolates the machine, limiting the scope of impact."
+      },
+      {
+        id: 28, tier: "Give Reasons", tierClass: "bg-amber-50 text-amber-700 border-amber-200",
+        prompt: "Give a reason: Why is data tampering considered a serious security incident?",
+        options: ["It makes files look colorful", "It alters critical operational or financial data without authorization, corrupting data integrity and trust", "It increases hard drive capacity", "It speeds up database queries"],
+        correct: 1, hint: "Compromising data integrity.", rationale: "Textbook p. 49: Data tampering alters system data without authorization."
+      },
+      {
+        id: 29, tier: "Give Reasons", tierClass: "bg-amber-50 text-amber-700 border-amber-200",
+        prompt: "Give a reason: Why is detection (Stage 2) dependent on logs and monitoring alerts?",
+        options: ["Hackers send polite notification emails", "Incidents often occur silently, so automated logs and alerts are required to discover and confirm them promptly", "Logs make computers run faster", "Monitoring is legally required for web design"],
+        correct: 1, hint: "Spotting hidden breaches.", rationale: "Textbook p. 49: Detection discovers and confirms that an incident has occurred."
+      },
+      {
+        id: 30, tier: "Give Reasons", tierClass: "bg-amber-50 text-amber-700 border-amber-200",
+        prompt: "Give a reason: Why is risk assessment formula expressed as multiplication (Impact × Likelihood) rather than addition?",
+        options: ["Multiplication is mathematically required for computer graphics", "A risk with zero probability or zero impact yields zero total risk, whereas high values in both compound the criticality", "Addition is too slow for computers", "It is just a random convention"],
+        correct: 1, hint: "Zero probability means zero risk.", rationale: "Textbook p. 50: Risk size is determined by both factors scaling together."
+      },
+
+      // Comparisons (Q31 - Q40)
+      {
+        id: 31, tier: "Comparison", tierClass: "bg-purple-50 text-purple-700 border-purple-200",
+        prompt: "Compare incident response stages: Which stage involves isolating an infected machine to stop damage spread?",
+        options: ["Preparation", "Containment", "Recovery", "Prevention of recurrence"],
+        correct: 1, hint: "Halting damage spread.", rationale: "Textbook p. 49: Containment limits the scope of impact."
+      },
+      {
+        id: 32, tier: "Comparison", tierClass: "bg-purple-50 text-purple-700 border-purple-200",
+        prompt: "Compare incident response stages: Which stage involves removing malware and fixing vulnerabilities?",
+        options: ["Detection", "Containment", "Eradication", "Recovery"],
+        correct: 2, hint: "Removing the root cause.", rationale: "Textbook p. 49: Eradication removes the cause of the incident."
+      },
+      {
+        id: 33, tier: "Comparison", tierClass: "bg-purple-50 text-purple-700 border-purple-200",
+        prompt: "Compare incident response stages: Which stage involves restoring systems from clean backups?",
+        options: ["Preparation", "Detection", "Eradication", "Recovery"],
+        correct: 3, hint: "Returning systems to normal.", rationale: "Textbook p. 49: Recovery returns systems and services to their normal state."
+      },
+      {
+        id: 34, tier: "Comparison", tierClass: "bg-purple-50 text-purple-700 border-purple-200",
+        prompt: "Compare risk factors: What two components determine the overall size of an information security risk?",
+        options: ["Cost and time", "Impact and likelihood", "Hardware speed and software version", "Developer count and server location"],
+        correct: 1, hint: "Severity and probability.", rationale: "Textbook p. 50: Risk size = Impact × Likelihood."
+      },
+      {
+        id: 35, tier: "Comparison", tierClass: "bg-purple-50 text-purple-700 border-purple-200",
+        prompt: "Compare incident types: Which type refers to confidential data being stolen by unauthorized outsiders?",
+        options: ["Service outage", "Information leak", "Data tampering", "Hardware crash"],
+        correct: 1, hint: "Data exposure.", rationale: "Textbook p. 49: Information leak is when personal or confidential data is leaked to the outside."
+      },
+      {
+        id: 36, tier: "Comparison", tierClass: "bg-purple-50 text-purple-700 border-purple-200",
+        prompt: "Compare incident response stages: Which stage occurs first before any attack happens?",
+        options: ["Detection", "Containment", "Preparation", "Recovery"],
+        correct: 2, hint: "Stage 1 set up in advance.", rationale: "Textbook p. 49: Preparation establishes procedures and structures in advance."
+      },
+      {
+        id: 37, tier: "Comparison", tierClass: "bg-purple-50 text-purple-700 border-purple-200",
+        prompt: "Compare risk matrix outcomes: According to the Risk Evaluation Matrix, which risks demand immediate attention?",
+        options: ["Low impact and low likelihood", "High impact and high likelihood", "Low impact and medium likelihood", "Medium impact and low likelihood"],
+        correct: 1, hint: "Top right corner of the matrix.", rationale: "Textbook p. 50: High-impact and high-likelihood risks should be addressed first."
+      },
+      {
+        id: 38, tier: "Comparison", tierClass: "bg-purple-50 text-purple-700 border-purple-200",
+        prompt: "Compare incident response stages: Which stage directly follows containment in the six-phase flow?",
+        options: ["Detection", "Eradication", "Recovery", "Prevention of recurrence"],
+        correct: 1, hint: "Phase 4 after phase 3.", rationale: "Textbook p. 49: Eradication follows containment."
+      },
+      {
+        id: 39, tier: "Comparison", tierClass: "bg-purple-50 text-purple-700 border-purple-200",
+        prompt: "Compare incident response outcomes: What happens if recovery is performed before eradication?",
+        options: ["Systems become twice as fast", "The malware or vulnerability remains, causing the incident to happen again", "Files are permanently encrypted", "Network cables disconnect automatically"],
+        correct: 1, hint: "The threat returns.", rationale: "Textbook p. 50, 52: If the cause is not removed, the same incident will occur again."
+      },
+      {
+        id: 40, tier: "Comparison", tierClass: "bg-purple-50 text-purple-700 border-purple-200",
+        prompt: "Compare security concepts: What distinguishes a security incident from a security threat?",
+        options: ["Threats involve actual damage, while incidents are just possibilities", "Incidents involve actual damage occurring, while threats are potential dangers", "They mean the exact same thing", "Incidents only happen in cloud computing"],
+        correct: 1, hint: "Actual damage vs potential danger.", rationale: "Textbook p. 50: Incident is a situation where actual damage occurs."
+      },
+
+      // Matching & Synthesis (Q41 - Q50)
+      {
+        id: 41, tier: "Matching & Synthesis", tierClass: "bg-slate-100 text-slate-800 border-slate-300",
+        prompt: "Matching Task (p. 50): Which stage matches 'Establishing response procedures and structures in advance'?",
+        options: ["Preparation", "Detection", "Containment", "Eradication"],
+        correct: 0, hint: "Stage 1.", rationale: "Textbook p. 50: Preparation establishes procedures in advance."
+      },
+      {
+        id: 42, tier: "Matching & Synthesis", tierClass: "bg-slate-100 text-slate-800 border-slate-300",
+        prompt: "Matching Task (p. 50): Which stage matches 'Discover and confirm that an incident has occurred'?",
+        options: ["Preparation", "Detection", "Containment", "Recovery"],
+        correct: 1, hint: "Stage 2.", rationale: "Textbook p. 50: Detection discovers and confirms incidents."
+      },
+      {
+        id: 43, tier: "Matching & Synthesis", tierClass: "bg-slate-100 text-slate-800 border-slate-300",
+        prompt: "Matching Task (p. 50): Which stage matches 'Remove the cause of the incident such as malware'?",
+        options: ["Containment", "Eradication", "Recovery", "Prevention"],
+        correct: 1, hint: "Stage 4.", rationale: "Textbook p. 50: Eradication removes the root cause."
+      },
+      {
+        id: 44, tier: "Matching & Synthesis", tierClass: "bg-slate-100 text-slate-800 border-slate-300",
+        prompt: "Order Evaluation (p. 54): What is the correct chronological order of the first three incident response stages?",
+        options: ["Containment → Detection → Preparation", "Preparation → Detection → Containment", "Detection → Preparation → Containment", "Eradication → Detection → Recovery"],
+        correct: 1, hint: "Prep, then Detect, then Contain.", rationale: "Textbook p. 54: Order is Preparation → Detection → Containment."
+      },
+      {
+        id: 45, tier: "Matching & Synthesis", tierClass: "bg-slate-100 text-slate-800 border-slate-300",
+        prompt: "True/False Evaluation (p. 50): Is it True or False that risk size is determined by impact alone?",
+        options: ["True", "False", "True only for server outages", "False - risk size equals Impact × Likelihood"],
+        correct: 1, hint: "Worked Example (1) C.", rationale: "Textbook p. 50: Statement C is False (risk size requires both impact and likelihood)."
+      },
+      {
+        id: 46, tier: "Matching & Synthesis", tierClass: "bg-slate-100 text-slate-800 border-slate-300",
+        prompt: "True/False Evaluation (p. 50): Is it True or False that containment must prevent the spread of damage before removing the cause?",
+        options: ["True", "False", "False - eradication comes first", "True only for email leaks"],
+        correct: 0, hint: "Worked Example (1) B.", rationale: "Textbook p. 50: Statement B is True."
+      },
+      {
+        id: 47, tier: "Matching & Synthesis", tierClass: "bg-slate-100 text-slate-800 border-slate-300",
+        prompt: "Concept Application (p. 53): Which action represents 'recovery' in a ransomware attack?",
+        options: ["Disconnecting the network cable", "Deleting the ransomware file", "Restoring encrypted files from clean backup copies", "Writing a post-incident report"],
+        correct: 2, hint: "Restoring normal state from backup.", rationale: "Textbook p. 50, 53: Recovery restores normal state from backup."
+      },
+      {
+        id: 48, tier: "Matching & Synthesis", tierClass: "bg-slate-100 text-slate-800 border-slate-300",
+        prompt: "Risk Prioritization (p. 54): If Risk A has high impact and high likelihood, and Risk B has low impact and low likelihood, which is prioritized?",
+        options: ["Risk B", "Risk A", "Both simultaneously", "Neither"],
+        correct: 1, hint: "High impact & high likelihood first.", rationale: "Textbook p. 50, 54: High-impact and high-likelihood risks are addressed first."
+      },
+      {
+        id: 49, tier: "Matching & Synthesis", tierClass: "bg-slate-100 text-slate-800 border-slate-300",
+        prompt: "Incident Classification (p. 49): A hacker alters database transaction records without permission. What type of incident is this?",
+        options: ["Information leak", "Data tampering", "Service outage", "Hardware upgrade"],
+        correct: 1, hint: "Altering data without authorization.", rationale: "Textbook p. 49: Data tampering is altering system data without authorization."
+      },
+      {
+        id: 50, tier: "Matching & Synthesis", tierClass: "bg-slate-100 text-slate-800 border-slate-300",
+        prompt: "Core Lesson Takeaway (p. 54): What is the ultimate takeaway of Lesson 2-3 regarding cybersecurity incidents?",
+        options: ["Incidents cannot be managed once they start.", "Follow the six stages in order and prioritize risks by impact multiplied by likelihood.", "Always recover systems before checking logs.", "Ignore low likelihood risks entirely without assessment."],
+        correct: 1, hint: "Key takeaway box p. 54.", rationale: "Textbook p. 54: Follow the six stages in order and prioritize risks by impact × likelihood."
+      }
+    ];
+
+    function goToNameEntry() {
+      document.getElementById('screen-landing').classList.add('hidden');
+      document.getElementById('screen-name-entry').classList.remove('hidden');
+      document.getElementById('student-name-input').focus();
+    }
+
+    function goToLanding() {
+      document.getElementById('screen-name-entry').classList.add('hidden');
+      document.getElementById('screen-landing').classList.remove('hidden');
+    }
+
+    function handleNameKeypress(e) {
+      if (e.key === 'Enter') submitStudentName();
+    }
+
+    function submitStudentName() {
+      const input = document.getElementById('student-name-input');
+      const val = input.value.trim();
+      const err = document.getElementById('name-error');
+      
+      if (!val) {
+        err.classList.remove('hidden');
+        input.classList.add('border-red-500');
+        return;
+      }
+      
+      err.classList.add('hidden');
+      input.classList.remove('border-red-500');
+      appState.studentName = val;
+      
+      document.getElementById('header-student-name').textContent = val;
+      document.getElementById('screen-name-entry').classList.add('hidden');
+      document.getElementById('screen-main-platform').classList.remove('hidden');
+      
+      initExamJumpGrid();
+      renderExamQuestion(0);
+      showToast(`Welcome, ${val}! Interactive revision unlocked.`);
+    }
+
+    function logoutToLanding() {
+      if (appState.speechUtterance) window.speechSynthesis.cancel();
+      document.getElementById('screen-main-platform').classList.add('hidden');
+      document.getElementById('screen-landing').classList.remove('hidden');
+      showToast('Logged out successfully.');
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+      appState.activeTab = tabId;
+
+      const tabs = ['explanation', 'revision', 'solutions', 'exam'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`nav-btn-${t}`);
+        if (`tab-${t}` === tabId) {
+          btn.className = 'tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 whitespace-nowrap transition bg-brand-orange text-white';
+        } else {
+          btn.className = 'tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 whitespace-nowrap transition text-slate-300 hover:bg-brand-navy-light';
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleAnswer(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('hidden');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-box');
+      const text = document.getElementById('toast-message');
+      text.textContent = msg;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3500);
+    }
+
+    function copySummaryNotes() {
+      const text = `Lesson 2-3 Summary: Incident Response and Risk Management | be;school\n
+1. Security Incidents:
+- Information leaks, data tampering, and service outages causing actual damage.
+
+2. 6-Stage Response Lifecycle:
+- Preparation → Detection → Containment → Eradication → Recovery → Prevention of recurrence.
+
+3. Why Order Matters:
+- Recovering without eradicating root causes lets incidents repeat. Containment must precede eradication.
+
+4. Risk Assessment:
+- Risk Size = Impact × Likelihood. High-impact and high-likelihood risks are prioritized first.`;
+
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
+      showToast('Summary copied to clipboard!');
+    }
+
+    function playAudioSummary() {
+      if (!('speechSynthesis' in window)) {
+        showToast('Speech synthesis not supported in this browser.');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const text = document.getElementById('audio-script-text').textContent;
+      const utterance = new SpeechSynthesisUtterance(text);
+      const voices = window.speechSynthesis.getVoices();
+      const engVoice = voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang.startsWith('en'));
+      if (engVoice) utterance.voice = engVoice;
+      utterance.lang = 'en-US';
+      utterance.rate = 1.15;
+      utterance.pitch = 1.05;
+
+      utterance.onstart = () => showToast('Playing English audio summary...');
+      utterance.onend = () => showToast('Finished playback.');
+
+      appState.speechUtterance = utterance;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function pauseAudioSummary() {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.pause();
+        showToast('Audio paused.');
+      }
+    }
+
+    function stopAudioSummary() {
+      window.speechSynthesis.cancel();
+      showToast('Audio stopped.');
+    }
+
+    function triggerPrintModal() { window.print(); }
+
+    function initExamJumpGrid() {
+      const container = document.getElementById('question-jump-grid');
+      container.innerHTML = '';
+      for (let i = 0; i < 50; i++) {
+        const btn = document.createElement('button');
+        btn.id = `q-jump-${i}`;
+        btn.textContent = i + 1;
+        btn.className = 'w-full py-1 text-[10px] font-bold rounded-lg border transition ' + 
+          (i === 0 ? 'bg-brand-orange text-white border-brand-orange' : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200');
+        btn.onclick = () => jumpToQuestion(i);
+        container.appendChild(btn);
+      }
+    }
+
+    function jumpToQuestion(index) {
+      if (index < 0 || index >= 50) return;
+      appState.currentExamIndex = index;
+      renderExamQuestion(index);
+    }
+
+    function navigateQuestion(dir) {
+      const next = appState.currentExamIndex + dir;
+      if (next >= 0 && next < 50) jumpToQuestion(next);
+    }
+
+    function renderExamQuestion(index) {
+      const q = questionBank[index];
+      appState.currentExamIndex = index;
+
+      document.getElementById('question-tier-badge').textContent = q.tier;
+      document.getElementById('question-tier-badge').className = `px-3 py-1 rounded-full text-xs font-black border ${q.tierClass}`;
+      document.getElementById('question-number-display').textContent = `Question ${index + 1} of 50`;
+      document.getElementById('question-prompt').textContent = q.prompt;
+
+      const box = document.getElementById('options-container');
+      box.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+
+      q.options.forEach((opt, optIdx) => {
+        const isSelected = appState.userAnswers[index] === optIdx;
+        const btn = document.createElement('button');
+        btn.className = `w-full text-left p-3.5 rounded-2xl border text-xs sm:text-sm font-bold flex items-center gap-3 transition ${
+          isSelected 
+            ? 'bg-brand-orange-light border-brand-orange text-brand-navy shadow-sm ring-2 ring-brand-orange/30' 
+            : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+        }`;
+        btn.onclick = () => selectExamOption(index, optIdx);
+
+        btn.innerHTML = `
+          <span class="w-7 h-7 rounded-xl flex items-center justify-center font-black text-xs flex-shrink-0 ${
+            isSelected ? 'bg-brand-orange text-white' : 'bg-slate-100 text-slate-600'
+          }">${letters[optIdx]}</span>
+          <span class="flex-1 leading-relaxed">${opt}</span>
+          ${isSelected ? '<i class="fa-solid fa-circle-check text-brand-orange text-base"></i>' : '<i class="fa-regular fa-circle text-slate-300 text-base"></i>'}
+        `;
+        box.appendChild(btn);
+      });
+
+      document.getElementById('in-question-hint-box').classList.add('hidden');
+      document.getElementById('hint-content-text').textContent = q.hint;
+
+      document.getElementById('btn-prev-q').disabled = (index === 0);
+      document.getElementById('btn-prev-q').classList.toggle('opacity-50', index === 0);
+
+      if (index === 49) {
+        document.getElementById('btn-next-q').classList.add('hidden');
+        document.getElementById('btn-submit-exam').classList.remove('hidden');
+      } else {
+        document.getElementById('btn-next-q').classList.remove('hidden');
+        document.getElementById('btn-submit-exam').classList.add('hidden');
+      }
+
+      updateJumpGridStyles();
+    }
+
+    function selectExamOption(qIdx, optIdx) {
+      if (appState.examSubmitted) return;
+      appState.userAnswers[qIdx] = optIdx;
+
+      const answered = appState.userAnswers.filter(a => a !== null).length;
+      document.getElementById('answered-count').textContent = answered;
+      document.getElementById('exam-progress-fill').style.width = `${(answered / 50) * 100}%`;
+
+      renderExamQuestion(qIdx);
+    }
+
+    function updateJumpGridStyles() {
+      for (let i = 0; i < 50; i++) {
+        const btn = document.getElementById(`q-jump-${i}`);
+        if (!btn) continue;
+        const isCurrent = (i === appState.currentExamIndex);
+        const isAnswered = (appState.userAnswers[i] !== null);
+
+        if (isCurrent) {
+          btn.className = 'w-full py-1 text-[10px] font-bold rounded-lg border bg-brand-orange text-white border-brand-orange ring-2 ring-orange-300';
+        } else if (isAnswered) {
+          btn.className = 'w-full py-1 text-[10px] font-bold rounded-lg border bg-emerald-500 text-white border-emerald-600';
+        } else {
+          btn.className = 'w-full py-1 text-[10px] font-bold rounded-lg border bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200';
+        }
+      }
+    }
+
+    function toggleExamHint() {
+      document.getElementById('in-question-hint-box').classList.toggle('hidden');
+    }
+
+    function submitExamForGrading() {
+      const answered = appState.userAnswers.filter(a => a !== null).length;
+      if (answered < 50) {
+        showToast(`Notice: You answered ${answered} of 50 questions.`);
+      }
+
+      appState.examSubmitted = true;
+      let score = 0;
+      questionBank.forEach((q, idx) => {
+        if (appState.userAnswers[idx] === q.correct) score++;
+      });
+
+      const percentage = Math.round((score / 50) * 100);
+
+      document.getElementById('exam-engine-view').classList.add('hidden');
+      const resultsView = document.getElementById('exam-results-view');
+      resultsView.classList.remove('hidden');
+
+      document.getElementById('student-score-name').textContent = `Assessment Report for: ${appState.studentName}`;
+      document.getElementById('raw-score-display').textContent = score;
+      document.getElementById('percent-score-display').textContent = `${percentage}%`;
+
+      const scoreBanner = document.getElementById('score-banner');
+      const iconContainer = document.getElementById('score-icon-container');
+      const tierMsg = document.getElementById('score-tier-message');
+
+      if (percentage >= 95) {
+        scoreBanner.className = 'bg-emerald-50/70 rounded-3xl p-6 sm:p-8 shadow-elevated border-2 border-emerald-500 text-center';
+        iconContainer.className = 'w-20 h-20 rounded-3xl mx-auto flex items-center justify-center text-4xl mb-4 bg-emerald-100 text-emerald-600';
+        iconContainer.innerHTML = '<i class="fa-solid fa-trophy text-amber-500"></i>';
+        tierMsg.innerHTML = `<span class="text-emerald-800 font-extrabold text-base block mb-1">Outstanding Achievement! Exceptional Mastery 🌟</span>
+        You have demonstrated an extraordinary understanding of incident response workflows and risk management frameworks. Keep maintaining this magnificent standard of excellence!`;
+      } else if (percentage >= 90) {
+        scoreBanner.className = 'bg-blue-50/70 rounded-3xl p-6 sm:p-8 shadow-elevated border-2 border-blue-500 text-center';
+        iconContainer.className = 'w-20 h-20 rounded-3xl mx-auto flex items-center justify-center text-4xl mb-4 bg-blue-100 text-blue-600';
+        iconContainer.innerHTML = '<i class="fa-solid fa-rocket text-blue-600"></i>';
+        tierMsg.innerHTML = `<span class="text-blue-800 font-extrabold text-base block mb-1">Excellent Performance! Great Work 🚀</span>
+        You have a strong command of the material, though working on a few finer details will help you achieve complete mastery. Keep up the great effort!`;
+      } else if (percentage >= 85) {
+        scoreBanner.className = 'bg-indigo-50/70 rounded-3xl p-6 sm:p-8 shadow-elevated border-2 border-indigo-400 text-center';
+        iconContainer.className = 'w-20 h-20 rounded-3xl mx-auto flex items-center justify-center text-4xl mb-4 bg-indigo-100 text-indigo-600';
+        iconContainer.innerHTML = '<i class="fa-solid fa-star text-indigo-600"></i>';
+        tierMsg.innerHTML = `<span class="text-indigo-900 font-extrabold text-base block mb-1">Very Good! Solid Foundation 📚</span>
+        You show a good grasp of the core concepts, but targeted review of specific sub-topics will help strengthen your overall proficiency.`;
+      } else {
+        scoreBanner.className = 'bg-amber-50/70 rounded-3xl p-6 sm:p-8 shadow-elevated border-2 border-amber-500 text-center';
+        iconContainer.className = 'w-20 h-20 rounded-3xl mx-auto flex items-center justify-center text-4xl mb-4 bg-amber-100 text-amber-600';
+        iconContainer.innerHTML = '<i class="fa-solid fa-book-open-reader text-amber-600"></i>';
+        tierMsg.innerHTML = `<span class="text-amber-900 font-extrabold text-base block mb-1">Needs Improvement: Time to Study Deeper 🎯</span>
+        Your score indicates that your current mastery is not at its best. We strongly encourage you to review the explanation and revision tabs more closely, practice the concepts, and work through the material again before retaking the assessment.`;
+      }
+
+      renderDetailedAudit();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderDetailedAudit() {
+      const auditList = document.getElementById('audit-questions-list');
+      auditList.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+
+      questionBank.forEach((q, idx) => {
+        const userChoice = appState.userAnswers[idx];
+        const isCorrect = (userChoice === q.correct);
+
+        const card = document.createElement('div');
+        card.className = `p-4 sm:p-5 rounded-2xl border text-xs sm:text-sm leading-relaxed ${
+          isCorrect ? 'bg-white border-slate-200' : 'bg-red-50/40 border-red-200'
+        }`;
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg flex items-center justify-center font-black text-xs ${
+                isCorrect ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'
+              }">
+                ${isCorrect ? '✓' : '✗'}
+              </span>
+              <span class="font-black text-brand-navy">Question ${idx + 1}: ${q.tier}</span>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${
+              isCorrect ? 'bg-emerald-50 text-emerald-700' : 'bg-red-100 text-red-700'
+            }">
+              ${isCorrect ? 'Correct' : 'Needs Review'}
+            </span>
+          </div>
+
+          <p class="font-bold text-slate-800 mb-3">${q.prompt}</p>
+
+          <div class="space-y-1 mb-3">
+            <div class="p-2 rounded-xl border text-xs font-semibold ${
+              userChoice !== null && isCorrect ? 'bg-emerald-50 text-emerald-900 border-emerald-300' : 'bg-slate-50 text-slate-600 border-slate-200'
+            }">
+              <strong>Your Recorded Answer:</strong> ${userChoice !== null ? `${letters[userChoice]}. ${q.options[userChoice]}` : '<span class="text-red-500">Unanswered</span>'}
+            </div>
+            ${!isCorrect ? `
+              <div class="p-2 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-900 text-xs font-bold">
+                <strong>Curriculum Correct Answer:</strong> ${letters[q.correct]}. ${q.options[q.correct]}
+              </div>
+            ` : ''}
+          </div>
+
+          <div class="bg-blue-50/70 p-3 rounded-xl border border-blue-200 text-slate-700 text-xs leading-relaxed">
+            <strong class="text-blue-900 block mb-0.5"><i class="fa-solid fa-graduation-cap text-brand-orange mr-1"></i> Scientific Explanation & Curriculum Rationale:</strong>
+            ${q.rationale}
+          </div>
+        `;
+
+        auditList.appendChild(card);
+      });
+    }
+
+    function retakeExam() {
+      appState.userAnswers = new Array(50).fill(null);
+      appState.currentExamIndex = 0;
+      appState.examSubmitted = false;
+
+      document.getElementById('answered-count').textContent = '0';
+      document.getElementById('exam-progress-fill').style.width = '0%';
+      document.getElementById('exam-results-view').classList.add('hidden');
+      document.getElementById('exam-engine-view').classList.remove('hidden');
+
+      initExamJumpGrid();
+      renderExamQuestion(0);
+      showToast('Assessment reset. Good luck on your new attempt!');
+    }
+  </script>
+</body>
+</html>
